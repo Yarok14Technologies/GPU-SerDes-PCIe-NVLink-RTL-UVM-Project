@@ -383,3 +383,72 @@ If asked, you can say:
 
 ---
 
+
+## **High-level architecture (your project in one picture)**
+
+![Image](https://figures.semanticscholar.org/bb24e8381cd700da65b30f8b6bc70d2e21b06cd7/1-Figure2.1-1.png)
+
+![Image](https://www.atrialogic.com/img/details/pcie.jpg)
+
+![Image](https://www.researchgate.net/publication/224399392/figure/fig2/AS%3A667853502033931%401536240091656/The-architecture-of-a-typical-SerDes-device.ppm)
+
+![Image](https://www.researchgate.net/publication/276231680/figure/fig1/AS%3A668915256537090%401536493233682/Block-Diagram-of-SERDES-Architecture.jpg)
+
+---
+
+## **Clean block diagram you can draw in interviews / slides**
+
+```
+ ┌──────────────────────── GPU FABRIC ────────────────────────┐
+ │                                                            │
+ │   128-bit TX DATA                                          │
+ │        │                                                   │
+ │   ┌─────────────── PCS ───────────────┐                    │
+ │   │ Scrambler → 128b/130b Encode → RD │                    │
+ │   └───────────────┬──────────────────┘                     │
+ │                   │ 130-bit                                │
+ │           ┌────── TX PIPELINE (SerDes) ──────┐             │
+ │           │ Stage-1: Gearbox/Register       │              │
+ │           │ Stage-2: Serializer (Shift Reg) │              │
+ │           └──────────────┬──────────────────┘              │
+ │                          │ 1-bit serial                    │
+ └──────────────────────────┼───────────────────────────────  ┘
+                            │
+                    ┌────── CHANNEL MODEL ───────┐
+                    │  • BER injector            │
+                    │  • Random Jitter (RJ)      │
+                    │  • Deterministic Jitter    │
+                    └──────────────┬───────────┘
+                                   │
+ ┌──────────────────────── GPU RX SIDE ──────────────────────┐
+ │                   ┌──── RX PIPELINE (SerDes) ─────┐       │
+ │                   │ Stage-1: Deserializer         │       │
+ │                   │ Stage-2: Register + Deskew    │       │
+ │                   └──────────────┬──────────────┘         │
+ │                                  │ 130-bit                │
+ │   ┌─────────────── PCS ───────────────┐                   │
+ │   │ 128b/130b Decode → RD check →     │                   │
+ │   │ Descrambler → 128-bit data        │                   │
+ │   └──────────────┬───────────────────┘                    │
+ │                  │                                        │
+ │            128-bit RX DATA                                │
+ └────────────────────────────────────────────────────────┘
+
+                ┌──────── PCIe-Like LTSSM ────────┐
+                │ DETECT → POLLING → CONFIG → L0  │
+                │        ↘ L0s / L1 / RETRAIN     │
+                └──────────────────────────────── ┘
+
+                ┌──────────── UVM ENV ─────────────┐
+                │ Driver → DUT → Monitor           │
+                │         ↘ Scoreboard             │
+                │   • BER errors                   │
+                │   • Lock time                    │
+                │   • Deskew check                 │
+                └────────────────────────────────┘
+```
+
+---
+
+
+
