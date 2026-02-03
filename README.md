@@ -1,27 +1,20 @@
-```md
-# **GPU SerDes (PCIe/NVLink) – RTL & UVM Project**
+# GPU SerDes (PCIe/NVLink) – RTL & UVM Project
 
-<!-- ======== STATUS & BUILD BADGES ======== -->
+<!-- ======== DYNAMIC GITHUB BADGES ======== -->
+[![GitHub stars](https://img.shields.io/github/stars/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/commits)
+[![GitHub license](https://img.shields.io/github/license/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/blob/main/LICENSE)
+
+<!-- ======== PROJECT FEATURES ======== -->
 ![RTL](https://img.shields.io/badge/Language-SystemVerilog-blue)
 ![UVM](https://img.shields.io/badge/Verification-UVM-purple)
 ![Sim](https://img.shields.io/badge/Simulators-Icarus%20%7C%20Questa%20%7C%20VCS-orange)
-![Status](https://img.shields.io/badge/Status-Active-brightgreen)
-
-<!-- ======== TOOLCHAIN BADGES ======== -->
-![Icarus](https://img.shields.io/badge/Icarus-11+-blue)
-![Questa](https://img.shields.io/badge/Questa-2023+-blue)
-![VCS](https://img.shields.io/badge/VCS-Supported-blue)
-
-<!-- ======== PROJECT SCOPE BADGES ======== -->
-![SerDes](https://img.shields.io/badge/Domain-SerDes-red)
 ![PCIe](https://img.shields.io/badge/Protocol-PCIe-blue)
 ![NVLink](https://img.shields.io/badge/Protocol-NVLink-green)
-![RTL](https://img.shields.io/badge/Type-RTL%20%2B%20UVM-yellow)
+![Status-Active-brightgreen]
 
-<!-- ======== LICENSE & MAINTENANCE (optional) ======== -->
-![License](https://img.shields.io/badge/License-MIT-lightgrey)
-![Maintained](https://img.shields.io/badge/Maintained-Yes-brightgreen)
-```
 # **GPU SerDes (PCIe/NVLink) – RTL & UVM Project**
 
 ## **Overview**
