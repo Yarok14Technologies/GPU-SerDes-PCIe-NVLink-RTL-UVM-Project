@@ -484,7 +484,7 @@ If asked, you can say:
 
 
 ---
-# ** Future Extensions**
+## Future Extensions
 # =========================================================
 
 # **1) FULL PCIe LTSSM (L2, L3, RECOVERY) – RTL**
