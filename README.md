@@ -419,14 +419,14 @@ If asked, you can say:
  │            128-bit RX DATA                                │
  └────────────────────────────────────────────────────────┘
 
-                ┌──────── PCIe-Like LTSSM ────────┐
-                │ DETECT → POLLING → CONFIG → L0  │
-                │        ↘ L0s / L1 / RETRAIN     │
-                └──────────────────────────────── ┘
+                ┌──────── PCIe-Like LTSSM ───────┐
+                │ DETECT → POLLING → CONFIG → L0 │
+                │     ↘ L0s / L1 / RETRAIN       │ 
+                └────────────────────────────────┘
 
                 ┌──────────── UVM ENV ─────────────┐
                 │ Driver → DUT → Monitor           │
-                │         ↘ Scoreboard             │
+                │        ↘ Scoreboard             │
                 │   • BER errors                   │
                 │   • Lock time                    │
                 │   • Deskew check                 │
