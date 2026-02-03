@@ -1,0 +1,75 @@
+```
+# ---------- Simulation Outputs ----------
+*.vcd
+*.fst
+*.wlf
+*.vpd
+*.trn
+*.saif
+*.shm
+
+# ---------- Compiled binaries ----------
+simv
+simv.daidir/
+simv.vdb
+a.out
+*.exe
+
+# ---------- Icarus Verilog ----------
+iverilog_dump.vvp
+iverilog.vcd
+
+# ---------- Questa / ModelSim ----------
+work/
+modelsim.ini
+vsim.wlf
+Transcript
+transcript
+DVEfiles/
+*.log
+*.mpf
+*.mti
+*.dsn
+*.pwl
+
+# ---------- VCS / Synopsys ----------
+csrc/
+ucli.key
+DVEfiles/
+*.vpd
+*.vcd
+*.vdb
+*.daidir
+
+# ---------- Waveform viewers ----------
+*.gtkw
+*.gtkwave
+*.ghw
+
+# ---------- OS / Editor artifacts ----------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.orig
+*.rej
+.vscode/
+.idea/
+
+# ---------- Python / Tools ----------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+# ---------- Build / cache ----------
+build/
+out/
+obj/
+tmp/
+.cache/
+```
