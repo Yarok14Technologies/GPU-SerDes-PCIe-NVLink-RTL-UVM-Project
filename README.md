@@ -445,38 +445,38 @@ If asked, you can say:
  │                          │ 1-bit serial                    │
  └──────────────────────────┼───────────────────────────────  ┘
                             │
-                    ┌────── CHANNEL MODEL ───────┐
-                    │  • BER injector            │
-                    │  • Random Jitter (RJ)      │
-                    │  • Deterministic Jitter    │
-                    └──────────────┬───────────┘
+                    ┌────── CHANNEL MODEL ────────┐
+                    │  • BER injector             │
+                    │  • Random Jitter (RJ)       │
+                    │  • Deterministic Jitter     │
+                    └──────────────┬──────────────┘
                                    │
  ┌──────────────────────── GPU RX SIDE ──────────────────────┐
- │                   ┌──── RX PIPELINE (SerDes) ─────┐       │
- │                   │ Stage-1: Deserializer         │       │
- │                   │ Stage-2: Register + Deskew    │       │
- │                   └──────────────┬──────────────┘         │
+ │                   ┌──── RX PIPELINE (SerDes) ──────┐      │
+ │                   │ Stage-1: Deserializer          │      │
+ │                   │ Stage-2: Register + Deskew     │      │
+ │                   └──────────────┬─────────────────┘      │
  │                                  │ 130-bit                │
  │   ┌─────────────── PCS ───────────────┐                   │
  │   │ 128b/130b Decode → RD check →     │                   │
  │   │ Descrambler → 128-bit data        │                   │
- │   └──────────────┬───────────────────┘                    │
+ │   └──────────────┬────────────────────┘                   │
  │                  │                                        │
  │            128-bit RX DATA                                │
- └────────────────────────────────────────────────────────┘
+ └───────────────────────────────────────────────────────────┘
 
-                ┌──────── PCIe-Like LTSSM ───────┐
-                │ DETECT → POLLING → CONFIG → L0 │
-                │     ↘ L0s / L1 / RETRAIN       │ 
-                └────────────────────────────────┘
+                ┌──────── PCIe-Like LTSSM ─────────┐
+                │ DETECT → POLLING → CONFIG → L0   │
+                │    ↘ L0s / L1 / RETRAIN         
+                └──────────────────────────────────┘
 
                 ┌──────────── UVM ENV ─────────────┐
                 │ Driver → DUT → Monitor           │
-                │        ↘ Scoreboard             │
+                │        ↘ Scoreboard             
                 │   • BER errors                   │
                 │   • Lock time                    │
                 │   • Deskew check                 │
-                └────────────────────────────────┘
+                └──────────────────────────────────┘
 ```
 
 ---
