@@ -16,8 +16,6 @@
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
 
-# **GPU SerDes (PCIe/NVLink) – RTL & UVM Project**
-
 ## **Overview**
 
 This repository contains a **behavioral-to-architectural RTL model of a GPU-style SerDes subsystem**, including:
