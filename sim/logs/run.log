@@ -1,0 +1,29 @@
+==========================================================
+SERDES_GPU_PROJECT SIMULATION RUN LOG
+==========================================================
+Date        : 2026-02-03
+Simulator   : Icarus Verilog / Questa / VCS
+Test        : serdes_test (UVM)
+Top Module  : gpu_serdes_system
+==========================================================
+
+[00:00] UVM_INFO: Starting simulation...
+[00:05] LTSSM: DETECT -> POLLING
+[00:10] LTSSM: POLLING -> CONFIG
+[00:15] LTSSM: CONFIG -> L0
+[00:20] CDR: Lock achieved
+[00:25] BER Injector: active (1e-6)
+[00:30] Scoreboard: First lock timestamp captured
+[00:50] Scoreboard: Lock time = 30 ns
+[01:00] Coverage: LTSSM L0 hit
+[01:20] Coverage: BER event observed
+[02:00] UVM_TEST PASSED
+
+==========================================================
+SUMMARY
+----------------------------------------------------------
+Total samples captured      : 1000
+BER errors observed         : 3
+Average lock time           : 30 ns
+LTSSM coverage              : 92%
+==========================================================
