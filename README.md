@@ -1,12 +1,18 @@
 
 # GPU SerDes (PCIe/NVLink) – RTL & UVM Project
 
-<!-- ======== DYNAMIC GITHUB BADGES ======== -->
-[![GitHub stars](https://img.shields.io/github/stars/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/network/members)
-[![GitHub issues](https://img.shields.io/github/issues/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/issues)
-[![GitHub last commit](https://img.shields.io/github/last-commit/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/commits)
-[![GitHub license](https://img.shields.io/github/license/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/blob/main/LICENSE)
+<!-- ======== PROJECT TITLE & BADGES ======== -->
+# GPU-SerDes-PCIe-NVLink-RTL-UVM-Project
+
+[![GitHub stars](https://img.shields.io/github/stars/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/commits)
+[![GitHub license](https://img.shields.io/github/license/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/blob/main/LICENSE)
+
+[![CI](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/actions/workflows/ci.yml/badge.svg)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/actions)
+[![Coverage Status](https://img.shields.io/codecov/c/github/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://codecov.io/gh/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)
+
 
 <!-- ======== PROJECT FEATURES ======== -->
 ![RTL](https://img.shields.io/badge/Language-SystemVerilog-blue)
