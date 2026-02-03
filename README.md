@@ -10,7 +10,7 @@
 [![GitHub last commit](https://img.shields.io/github/last-commit/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/commits)
 [![GitHub license](https://img.shields.io/github/license/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/blob/main/LICENSE)
 
-[![CI](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/actions/workflows/ci.yml/badge.svg)](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/actions)
+
 
 [![Coverage Status](https://img.shields.io/codecov/c/github/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)](https://codecov.io/gh/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project)
 
