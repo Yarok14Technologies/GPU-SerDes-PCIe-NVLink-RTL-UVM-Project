@@ -1,3 +1,4 @@
+```md
 # GPU SerDes (PCIe/NVLink) – RTL & UVM Project
 
 <!-- ======== DYNAMIC GITHUB BADGES ======== -->
@@ -10,22 +11,10 @@
 <!-- ======== PROJECT FEATURES ======== -->
 ![RTL](https://img.shields.io/badge/Language-SystemVerilog-blue)
 ![UVM](https://img.shields.io/badge/Verification-UVM-purple)
-![Sim](https://img.shields.io/badge/Simulators-Icarus%20%7C%20Questa%20%7C%20VCS-orange)
-![PCIe](https://img.shields.io/badge/Protocol-PCIe-blue)
-![NVLink](https://img.shields.io/badge/Protocol-NVLink-green)
-![Status-Active-brightgreen]
-# GPU SerDes (PCIe/NVLink) – RTL & UVM Project
-
-[![GitHub stars](https://img.shields.io/github/stars/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/network/members)
-[![GitHub issues](https://img.shields.io/github/issues/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/issues)
-[![GitHub last commit](https://img.shields.io/github/last-commit/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/commits)
-[![GitHub license](https://img.shields.io/github/license/Yarok14Technologies/serdes_gpu)](https://github.com/Yarok14Technologies/serdes_gpu/blob/main/LICENSE)
-
-![RTL](https://img.shields.io/badge/Language-SystemVerilog-blue)
-![UVM](https://img.shields.io/badge/Verification-UVM-purple)
 ![Simulators](https://img.shields.io/badge/Simulators-Icarus%20%7C%20Questa%20%7C%20VCS-orange)
 ![Protocols](https://img.shields.io/badge/Protocols-PCIe%20%2F%20NVLink-lightgrey)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+```
 
 
 # **GPU SerDes (PCIe/NVLink) – RTL & UVM Project**
