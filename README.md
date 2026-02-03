@@ -1,4 +1,4 @@
-```md
+
 # GPU SerDes (PCIe/NVLink) – RTL & UVM Project
 
 <!-- ======== DYNAMIC GITHUB BADGES ======== -->
@@ -14,7 +14,6 @@
 ![Simulators](https://img.shields.io/badge/Simulators-Icarus%20%7C%20Questa%20%7C%20VCS-orange)
 ![Protocols](https://img.shields.io/badge/Protocols-PCIe%20%2F%20NVLink-lightgrey)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
-```
 
 
 # **GPU SerDes (PCIe/NVLink) – RTL & UVM Project**
