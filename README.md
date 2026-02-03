@@ -39,36 +39,82 @@ This project is suitable for:
 ## **Directory Structure**
 
 ```
-serdes_gpu/
+serdes_gpu_project/
 │
 ├── README.md
+├── LICENSE
+├── .gitignore
 ├── Makefile
 │
 ├── rtl/
-│   ├── gpu_serdes_system.sv
-│   ├── serdes_tx_pipeline.sv
-│   ├── serdes_rx_pipeline.sv
-│   ├── pcie_128b130b_encode.sv
-│   ├── pcie_128b130b_decode.sv
-│   ├── pcie_scrambler.sv
-│   ├── jitter_channel.sv
-│   └── pcie_ltssm.sv
+│   │
+│   ├── top/
+│   │   ├── gpu_serdes_system.sv
+│   │   └── gpu_serdes_top.sv
+│   │
+│   ├── phy/
+│   │   ├── serdes_tx_pipeline.sv
+│   │   ├── serdes_rx_pipeline.sv
+│   │   ├── ber_channel.sv
+│   │   ├── jitter_channel.sv
+│   │   └── cdr_model.sv
+│   │
+│   ├── pcs/
+│   │   ├── pcie_scrambler.sv
+│   │   ├── pcie_128b130b_encode.sv
+│   │   └── pcie_128b130b_decode.sv
+│   │
+│   ├── protocol/
+│   │   ├── pcie_ltssm_full.sv
+│   │   └── nvlink_framing_encode.sv
+│   │   └── nvlink_framing_decode.sv
+│   │
+│   └── analysis/
+│       └── eye_stats_collector.sv
 │
 ├── tb/
-│   ├── serdes_tb_top.sv
-│   ├── uvm_env.sv
-│   ├── serdes_driver.sv
-│   ├── serdes_monitor.sv
-│   ├── serdes_agent.sv
-│   └── serdes_scoreboard.sv
+│   │
+│   ├── top/
+│   │   └── serdes_tb_top.sv
+│   │
+│   ├── uvm/
+│   │   ├── serdes_item.sv
+│   │   ├── serdes_driver.sv
+│   │   ├── serdes_monitor.sv
+│   │   ├── serdes_agent.sv
+│   │   ├── serdes_scoreboard.sv
+│   │   ├── serdes_coverage.sv
+│   │   ├── serdes_env.sv
+│   │   └── serdes_test.sv
+│   │
+│   └── sequences/
+│       ├── serdes_base_seq.sv
+│       ├── ber_stress_seq.sv
+│       └── retrain_seq.sv
 │
 ├── scripts/
 │   ├── run_iverilog.sh
-│   └── run_questa.tcl
+│   ├── run_questa.tcl
+│   └── run_vcs.sh
 │
-└── docs/
-    ├── architecture_diagram.png
-    └── eye_diagram.png
+├── sim/
+│   ├── waves/
+│   │   └── serdes.vcd
+│   └── logs/
+│       └── run.log
+│
+├── docs/
+│   ├── architecture_diagram.png
+│   ├── serdes_eye_diagram.png
+│   ├── bathtub_curve.png
+│   ├── ltssm_state_diagram.png
+│   └── interview_slides/
+│       └── serdes_nvidia_interview_deck.pptx
+│
+└── tools/
+    ├── plot_eye.py
+    ├── plot_bathtub.py
+    └── gen_stats.py
 ```
 
 ---
