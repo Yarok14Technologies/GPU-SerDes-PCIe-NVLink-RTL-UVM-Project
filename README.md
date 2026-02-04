@@ -867,3 +867,179 @@ endclass
 
 ---
 
+**clear, data-centric explanation of how data is managed in your SerDes architecture (as per your repo structure)** — from source to sink, including integrity, timing, and reliability handling.
+
+---
+
+## **1) Data Management — Transmitter Side (TX Path)**
+
+### **A. Protocol & Framing Layer (PCS → Protocol)**
+
+📂 **Your files involved:**
+
+* `pcie_128b130b_encode.sv`
+* `pcie_scrambler.sv`
+* `nvlink_framing_encode.sv`
+* `pcie_ltssm_full.sv`
+
+👉 **How data is handled:**
+
+1. **Packetization / Framing**
+
+   * Higher-layer data (PCIe or NVLink transactions) is first framed.
+   * NVLink/PCIe packets are segmented into transmission-friendly blocks.
+
+2. **Encoding (128b/130b)**
+
+   * Raw 128-bit payload → encoded into 130-bit symbol.
+   * **Purpose:**
+
+     * Guarantee enough transitions for clock recovery
+     * Embed control characters (ordered sets, SKP, idle, etc.)
+     * Enable error detection
+
+3. **Scrambling**
+
+   * Bit scrambling randomizes the data pattern.
+   * Prevents long runs of 0s or 1s.
+   * Reduces EMI and improves signal integrity.
+
+🔹 **Data state at this point:**
+
+> Structured, encoded, and randomized digital words ready for serialization.
+
+---
+
+## **2) PHY Layer — Serialization & Channel**
+
+📂 **Your files:**
+
+* `serdes_tx_pipeline.sv`
+* `ber_channel.sv`
+* `jitter_channel.sv`
+
+### **A. Serializer (TX)**
+
+* Converts parallel 130-bit words → high-speed serial bitstream.
+* Manages:
+
+  * Bit ordering (MSB → LSB or LSB → MSB as designed)
+  * Lane alignment (if multi-lane extension is later added)
+
+🔹 **Data state:**
+
+> High-speed serial stream.
+
+### **B. Channel Model (What happens to data in flight)**
+
+You explicitly model impairments in:
+
+* `ber_channel.sv` → **Bit Errors**
+* `jitter_channel.sv` → **Timing noise**
+
+Your channel manages:
+
+* Random bit flips (BER stress testing)
+* Timing jitter (edge uncertainty)
+* Potential inter-symbol interference (if extended later)
+
+🔹 **Key idea:**
+
+> Data is not assumed “perfect” — your testbench can inject realistic corruption.
+
+---
+
+## **3) Receiver Side — Recovery & Integrity (RX Path)**
+
+📂 **Your files:**
+
+* `cdr_model.sv`
+* `serdes_rx_pipeline.sv`
+* `pcie_128b130b_decode.sv`
+
+### **A. Clock & Data Recovery (CDR)**
+
+The CDR:
+
+* Reconstructs clock from incoming data transitions.
+* Aligns sampling point to eye center.
+* Compensates for jitter.
+
+🔹 **Data state:**
+
+> Cleaned-up sampled serial bits.
+
+### **B. Deserializer**
+
+* Converts serial stream → parallel 130-bit words.
+* Maintains word boundary using alignment markers (from 128b/130b encoding).
+
+🔹 **Data state:**
+
+> Parallel encoded data words.
+
+### **C. Decoding & Descrambling**
+
+* 130b → 128b payload recovered.
+* Scrambler is reversed.
+* Invalid symbols can be flagged.
+
+🔹 **Data state:**
+
+> Original payload (with error flags if corruption occurred).
+
+---
+
+## **4) Buffering & Flow Control (Data Management Core)**
+
+📂 **Likely inside:**
+
+* `serdes_rx_pipeline.sv`
+* `gpu_serdes_system.sv`
+
+### **FIFO Buffer**
+
+Your design includes a **FIFO at the receiver** (as shown in the architecture image).
+
+The FIFO manages:
+
+* Clock domain crossing (if TX and RX clocks differ)
+* Burst absorption
+* Backpressure handling (in future extension)
+* Data rate mismatch smoothing
+
+🔹 **Final data state:**
+
+> Reliable, time-aligned data available for higher layers (PCIe/NVLink stack).
+
+---
+
+## **5) Error & Quality Management (Very important in your repo)**
+
+📂 **Your analysis tools:**
+
+* `eye_stats_collector.sv`
+* `plot_eye.py`
+* `plot_bathtub.py`
+
+Your system manages data quality via:
+
+* **BER tracking**
+* **Eye diagram monitoring**
+* **Bathtub curve analysis (timing margin vs BER)**
+
+This means:
+
+* You don’t just *send data* — you **measure how healthy the data path is.**
+* This is exactly how real GPU SerDes (NVIDIA/AMD) systems operate.
+
+---
+
+## **One-line summary of “How data is managed”**
+
+> **Framed → Encoded → Scrambled → Serialized → (Noisy Channel) → Recovered (CDR) → Deserialized → Decoded → Buffered → Quality-checked.**
+
+---
+
+
+
