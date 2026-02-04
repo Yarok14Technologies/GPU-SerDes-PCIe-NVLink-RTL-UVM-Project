@@ -1033,6 +1033,9 @@ This means:
 * You don’t just *send data* — you **measure how healthy the data path is.**
 * This is exactly how real GPU SerDes (NVIDIA/AMD) systems operate.
 
+![SERDES in GPU Architecture with BER and Jitter Noise](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/blob/main/Docs/SERDES%20in%20GPU%20Architecture%20with%20BER%20and%20Jitter%20Noise.png)
+
+
 ---
 
 ## **One-line summary of “How data is managed”**
