@@ -45,6 +45,7 @@ This project is suitable for:
 
 ---
 
+![Architecture](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/blob/main/Docs/architecture_diagram%202.png)
 ## **Directory Structure**
 
 ```
@@ -125,6 +126,9 @@ serdes_gpu_project/
     ├── plot_bathtub.py
     └── gen_stats.py
 ```
+### System Architecture
+
+![Architecture](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/blob/main/Docs/architecture_diagram%201.png)
 
 ---
 
