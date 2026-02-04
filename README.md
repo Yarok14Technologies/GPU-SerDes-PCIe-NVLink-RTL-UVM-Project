@@ -388,6 +388,9 @@ States implemented:
 * L1 (Sleep)
 * RETRAIN
 
+### ltssm state diagram.png
+![Architecture](https://github.com/Yarok14Technologies/GPU-SerDes-PCIe-NVLink-RTL-UVM-Project/blob/main/Docs/ltssm%20state%20diagram.png)
+
 ### ✅ 4) BER + Jitter Channel Model
 
 * Bit Error Rate (BER) injector
