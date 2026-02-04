@@ -1,6 +1,3 @@
-
-# GPU SerDes (PCIe/NVLink) – RTL & UVM Project
-
 <!-- ======== PROJECT TITLE & BADGES ======== -->
 # GPU-SerDes-PCIe-NVLink-RTL-UVM-Project
 
