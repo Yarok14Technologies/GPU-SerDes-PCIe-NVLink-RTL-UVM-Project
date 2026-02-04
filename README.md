@@ -1041,5 +1041,152 @@ This means:
 
 ---
 
+ **Heart of real SerDes design and validation.**
+In your project, **BER and Jitter are not “features of the link” — they are *intentional stress models* to make your SerDes realistic and testable.**
+
+Here is the clear technical reason, mapped to your repo.
+
+---
+
+# **Why BER and Jitter are used in your SerDes?**
+
+## ✅ **Short answer**
+
+👉 **To model real-world channel impairments and verify that your SerDes is robust, reliable, and recoverable — just like in real GPUs (NVIDIA/AMD).**
+
+You are essentially **testing: “Will my SerDes still work under imperfect, noisy conditions?”**
+
+---
+
+# **1) Why BER (Bit Error Rate) is used — `ber_channel.sv`**
+
+### **Purpose: Reliability Testing**
+
+In the real world, bits get corrupted due to:
+
+* Thermal noise
+* Crosstalk
+* Signal attenuation
+* Interference
+* Power supply noise
+* Manufacturing variations
+
+Your **BER model injects random bit flips** into the serial stream.
+
+### What this allows you to validate:
+
+Your BER model helps you test:
+
+1. **Error tolerance of the link**
+
+   * How many bit errors can your system tolerate?
+   * Does the receiver still lock?
+
+2. **Effectiveness of encoding (128b/130b)**
+
+   * 128b/130b encoding helps detect errors.
+   * With BER injection, you can verify:
+
+     * Are corrupted symbols detected?
+     * Are illegal codes flagged?
+
+3. **Impact on FIFO & higher layers**
+
+   * Does your FIFO overflow under error conditions?
+   * Does the system stall or recover?
+
+### In one line:
+
+> **BER is used to test DATA INTEGRITY under noisy conditions.**
+
+---
+
+# **2) Why Jitter is used — `jitter_channel.sv`**
+
+### **Purpose: Timing Robustness Testing**
+
+In a real SerDes channel, edges of the signal are **never perfectly periodic** due to:
+
+* Clock instability
+* PCB trace variations
+* Temperature drift
+* Power noise
+* Inter-symbol interference (ISI)
+
+Your jitter model introduces **timing uncertainty** to the edges.
+
+### What this allows you to validate:
+
+1. **Clock and Data Recovery (CDR) performance**
+   Your `cdr_model.sv` must:
+
+* Track clock from noisy data
+* Find the optimal sampling point (center of the eye)
+* Adapt to changing timing conditions
+
+Without jitter:
+
+* CDR is trivial → not realistic
+* Your design would look “perfect on paper” but fail in silicon
+
+2. **Eye opening robustness**
+   Jitter shrinks the eye diagram.
+   You can analyze:
+
+* Eye height (noise margin)
+* Eye width (timing margin)
+* Bathtub curve (BER vs timing offset)
+
+### In one line:
+
+> **Jitter is used to test TIMING RECOVERY and CDR robustness.**
+
+---
+
+# **3) Why BOTH together (BER + Jitter)? — This is key**
+
+Real channels don’t have only bit errors or only jitter — they have **both simultaneously.**
+
+Using both lets you test:
+
+* Worst-case combined stress:
+
+  * Bad timing + random bit flips
+* Whether your SerDes:
+
+  * Loses lock
+  * Recovers gracefully
+  * Needs retraining (`retrain_seq.sv` in your TB)
+
+This is exactly why you also have:
+
+* `ber_stress_seq.sv`
+* `retrain_seq.sv`
+
+You are not just simulating — you are **validating a resilient link.**
+
+---
+
+# **4) How this maps to your repo (clean mapping)**
+
+| File                     | Why BER/Jitter matters here      |
+| ------------------------ | -------------------------------- |
+| `serdes_tx_pipeline.sv`  | Must produce clean transitions   |
+| `ber_channel.sv`         | Injects realistic bit corruption |
+| `jitter_channel.sv`      | Distorts timing of edges         |
+| `cdr_model.sv`           | Must recover clock under jitter  |
+| `serdes_rx_pipeline.sv`  | Must still deserialize correctly |
+| `eye_stats_collector.sv` | Measures impact of BER & jitter  |
+| `plot_eye.py`            | Visualizes effect of jitter      |
+| `plot_bathtub.py`        | Shows BER vs timing margin       |
+
+---
+
+# **Interview-ready one-liner (you can say this):**
+
+> *“BER models data corruption in the channel, while jitter models timing uncertainty. Together, they stress the SerDes so we can validate CDR performance, decoding reliability, and link robustness under realistic operating conditions.”*
+
+---
+
 
 
