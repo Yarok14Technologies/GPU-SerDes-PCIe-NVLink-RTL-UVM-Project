@@ -1201,4 +1201,491 @@ You are not just simulating — you are **validating a resilient link.**
 ---
 
 
+**Clear, module-by-module, end-to-end deep explanation of your `serdes_gpu_project/`** — what **each block does, what it models, what signals it handles, and how it fits into a real GPU-style SerDes.**
+This is written in a way you can confidently explain in interviews (NVIDIA/Qualcomm/AMD/Intel).
+
+---
+
+# **Big picture: how your whole system flows**
+
+![Image](https://www.researchgate.net/publication/276231680/figure/fig1/AS%3A668915256537090%401536493233682/Block-Diagram-of-SERDES-Architecture.jpg)
+
+![Image](https://community.cadence.com/resized-image/__size/1280x960/__key/communityserver-blogs-components-weblogfiles/00-00-00-00-11/6758.pastedimage1623850271283v4.png)
+
+![Image](https://helpfiles.keysight.com/csg/N1930xB/EyeDiagramDefs.gif)
+
+**Logical flow in your project:**
+
+```
+TX DATA
+   ↓
+PCS (Scramble + 128b/130b Encode)
+   ↓
+TX PIPELINE (Serializer)
+   ↓
+BER + JITTER CHANNEL (Noisy medium)
+   ↓
+CDR (Clock & Data Recovery)
+   ↓
+RX PIPELINE (Deserializer + Deskew)
+   ↓
+PCS (128b/130b Decode + Descramble)
+   ↓
+RX DATA
+   ↑
+LTSSM (Link Training & Control)
+   ↑
+UVM TB (Driver → Monitor → Scoreboard)
+```
+
+I will now explain **every folder and every module in detail.**
+
+---
+
+# ===========================
+
+# **1) rtl/top/**  → SYSTEM INTEGRATION
+
+# ===========================
+
+## **gpu_serdes_top.sv — “DUT Top Wrapper”**
+
+**Role:**
+This is the **chip-level top module** that instantiates everything.
+
+It connects:
+
+* TX path
+* Channel model
+* RX path
+* LTSSM
+* CDR
+* Testbench interfaces
+
+### What it manages:
+
+* Clock & reset distribution
+* Connecting UVM testbench signals to DUT
+* Lane configuration (if extended)
+* Global control signals (training, idle, error flags)
+
+**Interview line:**
+
+> “`gpu_serdes_top` is the integration wrapper that wires together PCS, PHY, channel, CDR, and LTSSM into a single DUT.”
+
+---
+
+## **gpu_serdes_system.sv — “SoC-Level SerDes System”**
+
+This is a **higher-level system model** that:
+
+* Mimics a GPU fabric environment
+* May include multiple lanes or multiple SerDes instances
+* Controls link enable/disable
+* Coordinates LTSSM with data traffic
+
+### Think of it as:
+
+> “SerDes inside a GPU SoC, not just a standalone link.”
+
+---
+
+# ===========================
+
+# **2) rtl/phy/** → PHYSICAL LAYER (TIMING + NOISE)
+
+# ===========================
+
+## **serdes_tx_pipeline.sv — TX PHY Pipeline**
+
+This models the **physical transmitter (TX) path**.
+
+### Stage-wise behavior:
+
+### **Stage 1 — Gearbox / Register Stage**
+
+* Accepts 130-bit encoded words
+* Buffers and aligns data
+* Handles back-to-back transfers
+* Prepares data for serialization
+
+### **Stage 2 — Serializer**
+
+* Converts **130-bit parallel → 1-bit serial stream**
+* Bit order control (MSB→LSB or LSB→MSB)
+* Drives `serial_tx` into the channel
+
+**Real-world analogy:**
+This is like a very fast shift register in silicon.
+
+---
+
+## **ber_channel.sv — Bit Error Channel Model**
+
+This injects **random bit flips** into the serial stream.
+
+### What it models:
+
+* Thermal noise
+* Crosstalk
+* Power noise
+* Signal integrity issues
+
+### How it works (conceptually):
+
+For each transmitted bit:
+
+* Generate a random number
+* If random < BER threshold → flip bit
+
+Example effect:
+
+```
+TX: 101101 → Channel → RX: 101111 (1 bit flipped)
+```
+
+### Why this is important:
+
+* Tests **error resilience**
+* Stresses 128b/130b decoder
+* Helps validate scoreboard error tracking
+
+---
+
+## **jitter_channel.sv — Timing Noise Model**
+
+This models **timing uncertainty** (not bit flips).
+
+### What it injects:
+
+* **Random Jitter (RJ)** → Gaussian-like noise
+* **Deterministic Jitter (DJ)** → periodic distortion
+
+### Effect:
+
+* Shifts bit edge positions
+* Shrinks the eye diagram
+* Makes CDR’s job harder
+
+**Interview line:**
+
+> “Jitter stresses the CDR and sampling logic, while BER stresses data integrity.”
+
+---
+
+## **cdr_model.sv — Clock & Data Recovery (CDR)**
+
+This is your **behavioral CDR loop model.**
+
+### Internal blocks (conceptual):
+
+1. **Phase Detector (bang-bang)**
+2. **Loop Filter (PI control: kp + ki)**
+3. **Integrator (frequency correction)**
+4. **Lock Detector**
+5. **Recovered Clock abstraction**
+
+### What it does in your system:
+
+* Tracks incoming data edges
+* Aligns sampling point to center of eye
+* Asserts `lock = 1` when stable
+
+### Interaction with LTSSM:
+
+* If `lock = 0` → LTSSM stays in POLLING/CONFIG
+* If `lock = 1` → LTSSM can go to L0
+
+---
+
+## **serdes_rx_pipeline.sv — RX PHY Pipeline**
+
+This is the **receiver physical layer.**
+
+### Stage 1 — Deserializer
+
+* Converts serial bitstream → 130-bit parallel words
+* Uses recovered clock from CDR
+
+### Stage 2 — Deskew & Alignment
+
+* Aligns multi-lane data (if extended)
+* Finds correct word boundaries using special 128b/130b markers
+
+### Output:
+
+* Clean 130-bit words → forwarded to PCS decoder
+
+---
+
+# ===========================
+
+# **3) rtl/pcs/** → PHYSICAL CODING SUBLAYER
+
+# ===========================
+
+## **pcie_scrambler.sv — Data Scrambler**
+
+### Purpose:
+
+* Randomizes data patterns
+* Prevents long runs of 0s or 1s
+* Reduces EMI and improves signal integrity
+
+### How it works:
+
+* Uses a self-synchronizing LFSR
+* Same scrambler logic used on TX and RX (no need to share seed)
+
+---
+
+## **pcie_128b130b_encode.sv — Encoder**
+
+Converts **128-bit payload → 130-bit encoded symbol**.
+
+### Why 128b/130b?
+
+* Ensures enough transitions for CDR
+* Embeds control symbols (IDLE, SKP, TS1, TS2)
+* Enables basic error detection
+
+### What it outputs:
+
+* 130-bit word with header bits + payload
+
+---
+
+## **pcie_128b130b_decode.sv — Decoder**
+
+Reverses encoding:
+
+* 130-bit → 128-bit payload
+* Checks running disparity
+* Flags illegal symbols
+* Feeds errors to scoreboard
+
+---
+
+# ===========================
+
+# **4) rtl/protocol/** → LINK CONTROL
+
+# ===========================
+
+## **pcie_ltssm_full.sv — LTSSM (Link Training FSM)**
+
+This is your **PCIe-like state machine** controlling link bring-up.
+
+### States implemented:
+
+* **DETECT** → Is a device present?
+* **POLLING** → Basic comms + CDR locking
+* **CONFIG** → Speed/lane training
+* **L0** → Active data transfer
+* **L0s, L1, L2, L3** → Power saving
+* **RECOVERY / RETRAIN** → Error handling
+
+### What LTSSM controls:
+
+* When to send TS1/TS2
+* When data traffic is allowed
+* When to retrain on errors
+
+---
+
+## **nvlink_framing_encode.sv — NVLink-like TX Framing**
+
+Creates **NVLink-style flits:**
+
+```
+[127:120]  Coherence bits
+[119:96]   Sequence ID
+[95:0]     Payload
+```
+
+Adds:
+
+* Sequence tracking
+* Coherence metadata
+
+---
+
+## **nvlink_framing_decode.sv — NVLink-like RX Framing**
+
+* Extracts payload, coherence bits, sequence ID
+* Checks for sequence mismatch (packet loss detection)
+
+---
+
+# ===========================
+
+# **5) rtl/analysis/** → SIGNAL QUALITY
+
+# ===========================
+
+## **eye_stats_collector.sv — Eye Quality Monitor**
+
+This collects statistics like:
+
+* Eye opening ratio
+* Number of clean vs corrupted samples
+* Overall link health metric
+
+Used with:
+
+* `plot_eye.py`
+* `plot_bathtub.py`
+
+to generate:
+
+* Eye diagrams
+* Bathtub curves (BER vs timing margin)
+
+---
+
+# ===========================
+
+# **6) tb/ (Testbench & UVM)**
+
+# ===========================
+
+## **serdes_tb_top.sv — Testbench Top**
+
+Instantiates:
+
+* DUT (`gpu_serdes_top`)
+* UVM environment
+* Clocks, resets
+
+---
+
+## **UVM Components**
+
+### **serdes_item.sv**
+
+Defines transaction fields:
+
+* Payload
+* Error flags
+* Timing info
+
+### **serdes_driver.sv**
+
+Drives data into DUT:
+
+* Generates traffic
+* Applies BER/Jitter stress
+
+### **serdes_monitor.sv**
+
+Observes DUT outputs:
+
+* Captures RX data
+* Logs errors
+
+### **serdes_scoreboard.sv**
+
+Checks correctness:
+
+* Compares TX vs RX
+* Tracks:
+
+  * BER errors
+  * Lock time
+  * Deskew status
+
+### **serdes_coverage.sv**
+
+Collects functional coverage:
+
+* LTSSM states
+* CDR lock/unlock
+* Error events
+
+### **serdes_env.sv**
+
+Integrates:
+
+* Agent
+* Scoreboard
+* Coverage
+
+### **serdes_test.sv**
+
+Defines test scenarios:
+
+* Normal traffic
+* BER stress
+* Retraining tests
+
+---
+
+# ===========================
+
+# **7) tb/sequences/**
+
+# ===========================
+
+## **serdes_base_seq.sv**
+
+Basic traffic sequence.
+
+## **ber_stress_seq.sv**
+
+* Increases BER dynamically
+* Tests link robustness
+
+## **retrain_seq.sv**
+
+* Forces retraining via LTSSM
+* Checks recovery behavior
+
+---
+
+# ===========================
+
+# **8) scripts/**
+
+# ===========================
+
+* `run_iverilog.sh` → runs open-source simulation
+* `run_questa.tcl` → runs Questa
+* `run_vcs.sh` → runs VCS
+
+---
+
+# ===========================
+
+# **9) docs/**
+
+# ===========================
+
+Contains:
+
+* Architecture diagrams
+* Eye diagrams
+* Bathtub curves
+* LTSSM state diagram
+* Interview slide deck
+
+---
+
+# ===========================
+
+# **10) tools/**
+
+# ===========================
+
+* `plot_eye.py` → generates eye plot
+* `plot_bathtub.py` → generates BER vs timing curve
+* `gen_stats.py` → computes link statistics
+
+---
+
+# **ONE-PAGE INTERVIEW SUMMARY (you can memorize this)**
+
+> “My project models a full GPU-style SerDes with PCS (scrambler + 128b/130b), a pipelined TX/RX PHY, realistic BER/Jitter channel, a behavioral CDR loop, and a PCIe-like LTSSM. A UVM environment drives traffic, injects stress, and tracks BER, lock time, and deskew, while analysis blocks generate eye and bathtub statistics.”
+
+---
+
 
